@@ -1,83 +1,71 @@
-const { Client } = require('discord.js-selfbot-v13');
-const readline = require('readline');
 const fs = require('fs').promises; // Import the filesystem module
-const utils = require('./utils'); 
-
-const client = new Client();
-const rl = readline.createInterface({
-    input: process.stdin,
-    output: process.stdout
-});
+const utils = require('./utils');
+const ts = require('./tatsu');
+const client = require('./client');
 
 const datafile = 'data.json';
-var channelId_ = 'channelId';
 var token_ = '';
-async function getCredentials() {
+async function getToken() {
     try {
-        // Try to read the existing credentials from the file
         const data = await fs.readFile(datafile, 'utf8');
-        const credentials = JSON.parse(data);
+        const token = JSON.parse(data);
         utils.logWithTime('Đang đọc file save...')
         utils.logWithTime('Đã tìm thấy file save, đang đăng nhập...');
-        return credentials;
+        return token;
     } catch (error) {
-        // If the file doesn't exist or there's an error reading it, ask for input
         utils.logWithTime('Không tìm thấy file save, vui lòng nhập thông tin để tạo file save mới.');
-        const newz = await inputCredentials();
-        await saveCredentials({ token: newz.token, channelId: newz.channelId }); // Save the credentials after login
-        return newz;
+        const token = await inputToken();
+        await saveToken(token); 
+        return token;
     }
 }
-async function inputCredentials() {
-    const newz = new Promise((resolve) => {
-        rl.question('Discord token: ', (token) => {
-            rl.question('Channel ID: ', (channelId) => {
-                const credentials = { token, channelId };
-                resolve(credentials);
-            });
+async function inputToken() {
+    const token = await new Promise((resolve) => {
+        utils.rl.question('Nhập token: ', (answer) => {
+            resolve(answer);
         });
     });
-    return newz;
+    return { token };
 }
-async function saveCredentials(credentials) {
-    // Save the credentials to the file
-    await fs.writeFile(datafile, JSON.stringify(credentials, null, 2), 'utf8');
+async function saveToken(token) {
+    await fs.writeFile(datafile, JSON.stringify(token));
     utils.logWithTime('Tạo file save thành công');
 }
 
 client.on('ready', async () => {
-    utils.logWithTime(`Đã đăng nhập bằng tài khoản ${client.user.username}, channel ID: ${channelId_}`);
-    tatsu();
+    utils.logWithTime(`Đã đăng nhập bằng tài khoản ${client.user.username}`);
+    menu();
 });
-
-async function tatsu() {
-    const channel = client.channels.cache.get(channelId_);
-    if (!channel) return console.log('Invalid channel ID');
-    while (true) {
-        await utils.delay(5000);
-        await channel.send('t!tg feed');
-        utils.logWithTime('Đã cho ăn');
-        await utils.delay(5000);
-        for (let i = 0; i < 3; i++) {
-            await channel.send('t!tg walk');
-            utils.logWithTime('Đã đi dạo');
-            await utils.delay(5000);
+async function menu() {
+    const menu = "1. Tatsu\n2. Mudae\n3. Exit";
+    let choice = '';
+    while (choice !== '1' && choice !== '2' && choice !== '3') {
+        console.clear();
+        const choice = await new Promise((resolve) => {
+            utils.rl.question(menu + '\nChọn: ', (answer) => {
+                resolve(answer);
+            });
+        });
+        switch (choice) {
+            case '1':
+                ts.tatsu();
+                break;
+            case '2':
+                break;
+            case '3':
+                process.exit();
+                break;
+            default:
+                utils.logErrorWithTime('Lựa chọn không hợp lệ');
+                break;
         }
-        await utils.delay(5000);
     }
 }
 
 async function login() {
-    const credentials = await getCredentials();
-    channelId_ = credentials.channelId;
-    token_ = credentials.token;
-    const { token, channelId } = credentials;
-    client.login(token);
+    const token = await getToken();
+    client.login(token.token);
     // You can use channelId here as needed
 }
-
 login();
 
-client.once('ready', async () => {
-    rl.close();
-});
