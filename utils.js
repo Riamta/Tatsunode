@@ -1,10 +1,17 @@
 const chalk = require('chalk');
 const readline = require('readline');
+const fs = require('fs').promises; // Import the filesystem module
+const datafile = 'data.json';
 
 const rl = readline.createInterface({
     input: process.stdin,
     output: process.stdout
 });
+async function getData() {
+    const data = await fs.readFile(datafile, 'utf8');
+    const datajson = JSON.parse(data);
+    return datajson;
+}
 
 async function delay(ms) {
     await new Promise(resolve => setTimeout(resolve, ms));
@@ -29,5 +36,6 @@ module.exports = {
     logWaitingWithTime,
     logErrorWithTime,
     logWithTime,
-    delay
+    delay,
+    getData
 };

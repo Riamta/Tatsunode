@@ -4,9 +4,8 @@ const utils = require('./utils');
 const datafile = 'data.json';
 
 async function getData() {
-    const data = await fs.readFile(datafile, 'utf8');
-    const datajson = JSON.parse(data);
-    const tatsuData = datajson['tatsu'];
+    const data = await utils.getData();
+    const tatsuData = data['tatsu'];
     utils.logWaitingWithTime('Đang đọc file data...')
     if (tatsuData) {
         utils.logWithTime('Đã tìm thấy file data');

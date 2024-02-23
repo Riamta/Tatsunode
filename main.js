@@ -7,15 +7,14 @@ const datafile = 'data.json';
 var token_ = '';
 async function getToken() {
     try {
-        const data = await fs.readFile(datafile, 'utf8');
-        const token = JSON.parse(data);
+        const data = await utils.getData();
         utils.logWithTime('Đang đọc file save...')
         utils.logWithTime('Đã tìm thấy file save, đang đăng nhập...');
-        return token;
+        return data['token'];
     } catch (error) {
         utils.logWithTime('Không tìm thấy file save, vui lòng nhập thông tin để tạo file save mới.');
         const token = await inputToken();
-        await saveToken(token); 
+        await saveToken(token);
         return token;
     }
 }
@@ -37,20 +36,22 @@ client.on('ready', async () => {
     menu();
 });
 async function menu() {
-    const menu = "1. Tatsu\n2. Mudae\n3. Exit";
-    let choice = '';
-    while (choice !== '1' && choice !== '2' && choice !== '3') {
-        console.clear();
+    let isValidChoice = false;
+    while (!isValidChoice) {
+        const menuText = "1. Tatsu\n2. Mudae\n3. Exit";
         const choice = await new Promise((resolve) => {
-            utils.rl.question(menu + '\nChọn: ', (answer) => {
+            utils.rl.question(menuText + '\nChọn: ', (answer) => {
                 resolve(answer);
             });
         });
+
         switch (choice) {
             case '1':
                 ts.tatsu();
+                isValidChoice = true;
                 break;
             case '2':
+                isValidChoice = true;
                 break;
             case '3':
                 process.exit();
@@ -64,7 +65,7 @@ async function menu() {
 
 async function login() {
     const token = await getToken();
-    client.login(token.token);
+    client.login(token);
     // You can use channelId here as needed
 }
 login();
