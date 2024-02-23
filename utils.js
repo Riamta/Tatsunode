@@ -1,4 +1,3 @@
-const chalk = require('chalk');
 const readline = require('readline');
 const fs = require('fs').promises; // Import the filesystem module
 const datafile = 'data.json';
@@ -18,17 +17,17 @@ async function delay(ms) {
 }
 function logWithTime(message) {
     const date = new Date();
-    const timeString = chalk.green(date.toLocaleTimeString());
+    const timeString = (date.toLocaleTimeString());
     console.log(`[${timeString}] ${message}`);
 }
 function logErrorWithTime(message) {
     const date = new Date();
-    const timeString = chalk.red(date.toLocaleTimeString());
+    const timeString = (date.toLocaleTimeString());
     console.log(`[${timeString}] ${message}`);
 }
 function logWaitingWithTime(message) {
     const date = new Date();
-    const timeString = chalk.yellow(date.toLocaleTimeString());
+    const timeString = (date.toLocaleTimeString());
     console.log(`[${timeString}] ${message}`);
 }
 module.exports = {
