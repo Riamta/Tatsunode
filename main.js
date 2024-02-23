@@ -36,33 +36,33 @@ client.on('ready', async () => {
     utils.logWithTime(`Đã đăng nhập bằng tài khoản ${client.user.username}`);
     menu();
 });
-async function menu() { muda.mudae();
-    // let isValidChoice = false;
-    // while (!isValidChoice) {
-    //     const menuText = "1. Tatsu\n2. Mudae\n3. Exit";
-    //     const choice = await new Promise((resolve) => {
-    //         utils.rl.question(menuText + '\nChọn: ', (answer) => {
-    //             resolve(answer);
-    //         });
-    //     });
+async function menu() {
+    let isValidChoice = false;
+    while (!isValidChoice) {
+        const menuText = "1. Tatsu\n2. Mudae\n3. Exit";
+        const choice = await new Promise((resolve) => {
+            utils.rl.question(menuText + '\nChọn: ', (answer) => {
+                resolve(answer);
+            });
+        });
        
-        // switch (choice) {
-        //     case '1':
-        //         ts.tatsu();
-        //         isValidChoice = true;
-        //         break;
-        //     case '2':
-        //         muda.mudae();
-        //         isValidChoice = true;
-        //         break;
-        //     case '3':
-        //         process.exit();
-        //         break;
-        //     default:
-        //         utils.logErrorWithTime('Lựa chọn không hợp lệ');
-        //         break;
-        // }
-    // }
+        switch (choice) {
+            case '1':
+                ts.tatsu();
+                isValidChoice = true;
+                break;
+            case '2':
+                muda.mudae();
+                isValidChoice = true;
+                break;
+            case '3':
+                process.exit();
+                break;
+            default:
+                utils.logErrorWithTime('Lựa chọn không hợp lệ');
+                break;
+        }
+    }
 }
 
 async function login() {
